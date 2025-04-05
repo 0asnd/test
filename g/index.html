@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>compact</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans Mono', monospace;
+            font-size: 17px;
+        }
+        
+        body {
+            background-color: #000000;
+            color: #b9b9b9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .top-bar {
+            background-color: #060606;
+            display: flex;
+            justify-content: center;
+            padding: 15px 15px;
+            width: 100%;
+        }
+        
+        .nav-items {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .nav-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #b9b9b9;
+            text-decoration: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px 15px;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+            width: 100px;
+            height: 61px;
+        }
+        
+        .nav-button:hover {
+            background-color: #111;
+        }
+        
+        .icon-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 24px;
+            margin-bottom: 5px;
+            width: 34px; /* Fixed width container */
+        }
+        
+        .nav-icon {
+            height: 24px;
+            object-fit: contain;
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+        }
+        
+        .search-container {
+            position: relative;
+            width: 100%;
+            max-width: 452.5px;
+            margin-bottom: 32px;
+            margin-top: 12px
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 15px 50px;
+            background-color: transparent;
+            border: 1px solid #333333;
+            border-radius: 15px;
+            color: white;
+            font-size: 17px;
+            outline: none;
+        }
+        
+        .search-box::placeholder {
+            color: #7f7f7f;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+        }
+        
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 100px);
+            grid-template-rows: repeat(2, 100px);
+            gap: 30px;
+            justify-content: center;
+            width: 100%;
+            max-width: 900px;
+        }
+        
+        .game-item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100px;
+            height: 100px;
+            border-radius: 18px;
+            overflow: hidden;
+            background-color: #101010;
+            border: 1px solid #333333;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .game-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+        
+        .game-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .no-results {
+            color: #b9b9b9;
+            text-align: center;
+            margin-top: 30px;
+            font-size: 18px;
+        }
+        
+        @media (max-width: 900px) {
+            .games-grid {
+                grid-template-columns: repeat(4, 100px);
+                grid-template-rows: repeat(4, 100px);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .nav-items {
+                gap: 30px;
+            }
+            
+            .games-grid {
+                grid-template-columns: repeat(3, 80px);
+                grid-template-rows: repeat(6, 80px);
+                gap: 10px;
+            }
+            
+            .game-item {
+                width: 80px;
+                height: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar"> 
+        <div class="nav-items">
+            <button class="nav-button" onclick="window.location.href='../index.html';">
+                <div class="icon-container">
+                    <img src="../assets/home.png" alt="Home" class="nav-icon" style="width: 24px;">
+                </div>
+                <span>home</span>
+            </button>
+            <button class="nav-button" onclick="window.location.href='index.html';" style="background-color: #2a2a2a">
+                <div class="icon-container">
+                    <img src="../assets/games.png" alt="Games" class="nav-icon" style="width: 31px;">
+                </div>
+                <span>games</span>
+            </button>
+            <button class="nav-button" onclick="window.location.href='../s/index.html';">
+                <div class="icon-container">
+                    <img src="../assets/settings.png" alt="Settings" class="nav-icon" style="width: 24px;">
+                </div>
+                <span>settings</span>
+            </button>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div class="search-container">
+            <img src="../assets/search.png" alt="Search" class="search-icon">
+            <input type="text" class="search-box" placeholder="search for a game" id="searchInput" oninput="searchGames()">
+        </div>
+        
+        <div class="games-grid" id="gamesGrid">
+            <div class="game-item" onclick="handleGameSuggestion()" data-name="suggest game">
+                <img src="../assets/suggest.png" alt="suggest game">
+            </div>
+            <div class="game-item" onclick="window.location.href='rb.html';" data-name="roblox">
+                <img src="../assets/rb.png" alt="Roblox">
+            </div>
+            <div class="game-item" onclick="window.location.href='mc.html';" data-name="minecraft">
+                <img src="../assets/mc.png" alt="Minecraft">
+            </div>
+            <div class="game-item" onclick="window.location.href='fn.html';" data-name="fnaf 1 five nights at freddy's">
+                <img src="../assets/fn.png" alt="FNAF 1">
+            </div>
+            <div class="game-item" onclick="window.location.href='fn2.html';" data-name="fnaf 2 five nights at freddy's">
+                <img src="../assets/fn2.png" alt="FNAF 2">
+            </div>
+            <div class="game-item" onclick="window.location.href='fn3.html';" data-name="fnaf 3 five nights at freddy's">
+                <img src="../assets/fn3.webp" alt="FNAF 3">
+            </div>
+            <div class="game-item" onclick="window.location.href='fn4.html';" data-name="fnaf 4 five nights at freddy's">
+                <img src="../assets/fn4.webp" alt="FNAF 4">
+            </div>
+            <div class="game-item" onclick="window.location.href='sr.html';" data-name="slowroads slow roads">
+              <img src="../assets/slowroads.jpg" alt="Slowroads">
+            </div>
+            <div class="game-item" onclick="window.location.href='sl.html';" data-name="slope">
+                <img src="../assets/sl.png" alt="Slope">
+            </div>
+            <div class="game-item" onclick="window.location.href='1v1.html';" data-name="1v1.lol">
+                <img src="../assets/splash.webp" alt="1v1.lol">
+            </div>
+            <div class="game-item" onclick="window.location.href='gd.html';" data-name="geometry dash">
+                <img src="../assets/gd.png" alt="Among Us">
+            </div>
+            <div class="game-item" onclick="window.location.href='ss.html';" data-name="subway surfers">
+                <img src="../assets/ss.png" alt="Subway Surfers">
+            </div>
+            <div class="game-item" onclick="window.location.href='bb.html';" data-name="block blast tetris">
+                <img src="../assets/bb.png" alt="Block Blast">
+            </div>
+            <div class="game-item" onclick="window.location.href='br.html';" data-name="bloxorz">
+                <img src="../assets/br.png" alt="Bloxorz">
+            </div>
+            <div class="game-item" onclick="window.location.href='24.html';" data-name="2048">
+                <img src="../assets/24.png" alt="2048">
+            </div>
+            <div class="game-item" onclick="window.location.href='fnf.html';" data-name="friday night funkin fnf">
+                <img src="../assets/fnf.png" alt="Friday Night Funkin">
+            </div>
+            <div class="game-item" onclick="window.location.href='cc.html';" data-name="cookie clicker">
+                <img src="../assets/cc.png" alt="Cookie Clicker">
+            </div>
+        </div>
+        <div id="noResults" class="no-results hidden">No games found</div>
+    </div>
+    <script>
+      function searchGames() {
+        const searchInput = document.getElementById('searchInput');
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        const gameItems = document.querySelectorAll('.game-item');
+        const gamesGrid = document.getElementById('gamesGrid');
+        const noResults = document.getElementById('noResults');
+        
+        let visibleCount = 0;
+        
+        gameItems.forEach(item => {
+          // Get the alt text from the image
+          const imgAlt = item.querySelector('img').getAttribute('alt').toLowerCase();
+          // Get the data-name attribute which contains additional search terms
+          const dataName = item.getAttribute('data-name').toLowerCase();
+          
+          // Check if the search term matches either the alt text or data-name
+          if (searchTerm === '') {
+            // Show all items if search is empty
+            item.classList.remove('hidden');
+            visibleCount++;
+          } else if (dataName.includes(searchTerm)) {
+            // If the search term is found in the data-name, show the item
+            item.classList.remove('hidden');
+            visibleCount++;
+          } else {
+            // Otherwise, hide the item
+            item.classList.add('hidden');
+          }
+        });
+        
+        // Show or hide the "No results" message
+        if (visibleCount === 0 && searchTerm !== '') {
+          noResults.classList.remove('hidden');
+          gamesGrid.style.display = 'none';
+        } else {
+          noResults.classList.add('hidden');
+          gamesGrid.style.display = 'grid';
+        }
+      }
+
+      async function handleGameSuggestion() {
+        try {
+          // Replace with your webhook components
+         const webhookParts = [
+            'https://discord.com/api/webhooks/',
+            '1355410819508076745',
+            '/',
+            'olHpAduwltGODB9eDSSLfYGWgdooQvPmQsbBtci7a-NnXsO0CNiApsP8-6HeH_ZVJnM_'
+          ];
+  
+         
+      const suggestion = prompt('suggest a game to add:');
+      if (!suggestion) return;
+  
+      // Block @everyone and @here mentions
+      const blacklist = ["@everyone", "@here"];
+      const containsBlacklist = blacklist.some(word => 
+        suggestion.toLowerCase().includes(word)
+      );
+  
+      if (containsBlacklist) {
+        alert('boi u not pinging everyone 😭🙏');
+        return;
+      }
+  
+      const response = await fetch(webhookParts.join(''), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: `new suggestion: ${suggestion}`
+        })
+      });
+  
+      if (!response.ok) throw new Error('Failed to send');
+      alert('will be reviewd by asnd');
+    } catch (error) {
+      console.error('Error:', error);
+      alert('error');
+    }
+      }
+      document.addEventListener('DOMContentLoaded', function() {
+    const customFavicon = localStorage.getItem('customFavicon');
+    const customTitle = localStorage.getItem('customTitle');
+    
+    if (customFavicon || customTitle) {
+      if (customFavicon) {
+        const faviconLink = document.querySelector('link[rel="icon"]') || 
+                           document.createElement('link');
+        faviconLink.type = 'image/x-icon';
+        faviconLink.rel = 'icon';
+        faviconLink.href = customFavicon;
+        document.head.appendChild(faviconLink);
+      }
+      
+      if (customTitle) {
+        document.title = customTitle;
+      }
+    } else {
+      const cloakType = localStorage.getItem('cloakType');
+      if (cloakType) {
+        let title, faviconUrl;
+        
+        switch(cloakType) {
+          case 'google':
+            title = 'Google';
+            faviconUrl = 'https://www.google.com/favicon.ico';
+            break;
+          case 'clever':
+            title = 'Clever | Portal';
+            faviconUrl = 'https://clever.com/favicon.ico';
+            break;
+          case 'canvas':
+            title = 'Dashboard';
+            faviconUrl = 'https://canvas.instructure.com/favicon.ico';
+            break;
+          case 'classroom':
+            title = 'Classes';
+            faviconUrl = 'https://classroom.google.com/favicon.ico';
+            break;
+        }
+        
+        if (title) document.title = title;
+        if (faviconUrl) {
+          const faviconLink = document.querySelector('link[rel="icon"]') || 
+                             document.createElement('link');
+          faviconLink.type = 'image/x-icon';
+          faviconLink.rel = 'icon';
+          faviconLink.href = faviconUrl;
+          document.head.appendChild(faviconLink);
+        }
+      }
+    }
+    
+    const gatekeepEnabled = localStorage.getItem('gatekeepMode') === 'true';
+    if (gatekeepEnabled) {
+      document.addEventListener('click', function(e) {
+        const link = e.target.closest('a');
+        if (link && link.href && !link.hasAttribute('data-no-gatekeep')) {
+          e.preventDefault();
+          const url = link.href;
+          localStorage.setItem('lastAttemptedUrl', url);
+          window.location.href = 'about:blank';
+        }
+      });
+    }
+  });
+  
+  if (window.location.href === 'about:blank') {
+    const lastUrl = localStorage.getItem('lastAttemptedUrl');
+    if (lastUrl) {
+      localStorage.removeItem('lastAttemptedUrl');
+      
+      const iframe = document.createElement('iframe');
+      iframe.style.position = 'fixed';
+      iframe.style.top = '0';
+      iframe.style.left = '0';
+      iframe.style.width = '100%';
+      iframe.style.height = '100%';
+      iframe.style.border = 'none';
+      iframe.src = lastUrl;
+      
+      document.body.innerHTML = '';
+      document.body.appendChild(iframe);
+    }
+  }
+    </script>
+</body>
+</html>

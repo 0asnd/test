@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="../assets/favicon.ico" id="favicon">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans Mono', monospace;
+            font-size: 17px;
+        }
+        
+        body {
+            background-color: #000000;
+            color: #b9b9b9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .top-bar {
+            background-color: #060606;
+            display: flex;
+            justify-content: center;
+            padding: 15px 15px;
+            width: 100%;
+        }
+        
+        .nav-items {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .nav-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #b9b9b9;
+            text-decoration: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px 15px;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+            width: 100px;
+            height: 61px;
+        }
+        
+        .nav-button:hover {
+            background-color: #111;
+        }
+        
+        .icon-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 24px;
+            margin-bottom: 5px;
+            width: 34px; /* Fixed width container */
+        }
+        
+        .nav-icon {
+            height: 24px;
+            object-fit: contain;
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .settings-container {
+            width: 80%;
+            max-width: 700px;
+            background-color: #1a1a1a;
+            border-radius: 30px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+        }
+        
+        .setting-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .setting-title {
+            font-size: 28px;
+            color: #b9b9b9;
+        }
+        
+        .cloak-controls {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .cloak-select {
+            background-color: #111;
+            color: #b9b9b9;
+            border: 1px solid #333;
+            border-radius: 5px;
+            padding: 10px 15px;
+            width: 200px;
+            outline: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23b9b9b9%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px top 50%;
+            background-size: 12px auto;
+        }
+        
+        .btn {
+            background-color: #111;
+            color: #b9b9b9;
+            border: 1px solid #333;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .btn:hover {
+            background-color: #222;
+        }
+        
+        .tab-data-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .tab-data-row {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+        
+        .tab-data-input {
+            flex: 1;
+            background-color: #111;
+            color: #b9b9b9;
+            border: 1px solid #333;
+            border-radius: 5px;
+            padding: 10px 15px;
+            outline: none;
+        }
+        
+        .gatekeep-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #333;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #4CAF50;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        @media (max-width: 768px) {
+            .settings-container {
+                width: 95%;
+                padding: 30px 20px;
+            }
+            
+            .cloak-controls {
+                flex-wrap: wrap;
+            }
+            
+            .cloak-select {
+                width: 100%;
+            }
+            
+            .tab-data-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar"> 
+        <div class="nav-items">
+            <button class="nav-button" onclick="navigateTo('../index.html')">
+                <div class="icon-container">
+                    <img src="../assets/home.png" alt="Home" class="nav-icon" style="width: 24px;">
+                </div>
+                <span>home</span>
+            </button>
+            <button class="nav-button" onclick="navigateTo('../g/index.html')">
+                <div class="icon-container">
+                    <img src="../assets/games.png" alt="Games" class="nav-icon" style="width: 31px;">
+                </div>
+                <span>games</span>
+            </button>
+            <button class="nav-button" style="background-color: #2a2a2a">
+                <div class="icon-container">
+                    <img src="../assets/settings.png" alt="Settings" class="nav-icon" style="width: 24px;">
+                </div>
+                <span>settings</span>
+            </button>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div class="settings-container">
+            <div class="setting-section">
+                <div class="setting-title">tab cloak</div>
+                <div class="cloak-controls">
+                    <select id="cloakSelect" class="cloak-select">
+                        <option value="google">google</option>
+                        <option value="clever">clever</option>
+                        <option value="canvas">canvas</option>
+                        <option value="classroom">classroom</option>
+                    </select>
+                    <button class="btn" onclick="setCloak()">set</button>
+                    <button class="btn" onclick="resetCloak()">reset</button>
+                </div>
+            </div>
+            
+            <div class="setting-section">
+                <div class="setting-title">tab data</div>
+                <div class="tab-data-controls">
+                    <div class="tab-data-row">
+                        <input type="text" id="faviconInput" class="tab-data-input" placeholder="favicon">
+                        <input type="text" id="titleInput" class="tab-data-input" placeholder="tab title">
+                        <button class="btn" onclick="setTabData()">set</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="setting-section">
+                <div class="gatekeep-row">
+                    <div class="setting-title">gatekeep mode</div>
+                    <label class="switch">
+                        <input type="checkbox" id="gatekeepToggle" checked onchange="toggleGatekeep()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Check for existing settings in localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load tab cloak settings
+            const cloakType = localStorage.getItem('cloakType');
+            if (cloakType) {
+                document.getElementById('cloakSelect').value = cloakType;
+                applyCloak(cloakType);
+            }
+            
+            // Load custom tab data if available
+            const customFavicon = localStorage.getItem('customFavicon');
+            const customTitle = localStorage.getItem('customTitle');
+            
+            if (customFavicon) {
+                document.getElementById('faviconInput').value = customFavicon;
+                document.getElementById('favicon').href = customFavicon;
+            }
+            
+            if (customTitle) {
+                document.getElementById('titleInput').value = customTitle;
+                document.title = customTitle;
+            }
+            
+            // Load gatekeep mode setting
+            const gatekeepMode = localStorage.getItem('gatekeepMode');
+            document.getElementById('gatekeepToggle').checked = gatekeepMode === 'true';
+        });
+        
+        // Tab Cloak Functions
+        function setCloak() {
+            const cloakType = document.getElementById('cloakSelect').value;
+            localStorage.setItem('cloakType', cloakType);
+            
+            // Clear custom tab data when using a preset
+            localStorage.removeItem('customFavicon');
+            localStorage.removeItem('customTitle');
+            document.getElementById('faviconInput').value = '';
+            document.getElementById('titleInput').value = '';
+            
+            applyCloak(cloakType);
+            alert(`Tab cloak set to ${cloakType}`);
+        }
+        
+        function resetCloak() {
+            localStorage.removeItem('cloakType');
+            localStorage.removeItem('customFavicon');
+            localStorage.removeItem('customTitle');
+            
+            document.title = 'Settings';
+            document.getElementById('favicon').href = '../assets/favicon.ico';
+            document.getElementById('faviconInput').value = '';
+            document.getElementById('titleInput').value = '';
+            
+            alert('Tab cloak reset');
+        }
+        
+        function applyCloak(cloakType) {
+            let title, faviconUrl;
+            
+            switch(cloakType) {
+                case 'google':
+                    title = 'Google';
+                    faviconUrl = 'https://www.google.com/favicon.ico';
+                    break;
+                case 'clever':
+                    title = 'Clever | Portal';
+                    faviconUrl = 'https://clever.com/favicon.ico';
+                    break;
+                case 'canvas':
+                    title = 'Dashboard';
+                    faviconUrl = 'https://canvas.instructure.com/favicon.ico';
+                    break;
+                case 'classroom':
+                    title = 'Classes';
+                    faviconUrl = 'https://classroom.google.com/favicon.ico';
+                    break;
+                default:
+                    title = 'Settings';
+                    faviconUrl = '../assets/favicon.ico';
+            }
+            
+            document.title = title;
+            document.getElementById('favicon').href = faviconUrl;
+        }
+        
+        // Tab Data Functions
+        function setTabData() {
+            const faviconUrl = document.getElementById('faviconInput').value;
+            const tabTitle = document.getElementById('titleInput').value;
+            
+            if (faviconUrl) {
+                document.getElementById('favicon').href = faviconUrl;
+                localStorage.setItem('customFavicon', faviconUrl);
+            }
+            
+            if (tabTitle) {
+                document.title = tabTitle;
+                localStorage.setItem('customTitle', tabTitle);
+            }
+            
+            // Clear any preset cloak when setting custom data
+            localStorage.removeItem('cloakType');
+            
+            alert('Tab data updated');
+        }
+        
+        // Gatekeep Mode Functions
+        function toggleGatekeep() {
+            const isEnabled = document.getElementById('gatekeepToggle').checked;
+            localStorage.setItem('gatekeepMode', isEnabled);
+            alert(`Gatekeep mode ${isEnabled ? 'enabled' : 'disabled'}`);
+        }
+        
+        // Navigation with Gatekeep Mode
+        function navigateTo(url) {
+            const gatekeepEnabled = document.getElementById('gatekeepToggle').checked;
+            
+            if (gatekeepEnabled) {
+                // Redirect to about:blank with the original URL stored in localStorage
+                localStorage.setItem('lastAttemptedUrl', url);
+                window.location.href = 'about:blank';
+            } else {
+                // Normal navigation
+                window.location.href = url;
+            }
+        }
+        
+        // Check if we're in about:blank and should redirect back
+        if (window.location.href === 'about:blank') {
+            const lastUrl = localStorage.getItem('lastAttemptedUrl');
+            if (lastUrl) {
+                // Clear the stored URL to prevent loops
+                localStorage.removeItem('lastAttemptedUrl');
+                
+                // Create an iframe to load the content
+                const iframe = document.createElement('iframe');
+                iframe.style.position = 'fixed';
+                iframe.style.top = '0';
+                iframe.style.left = '0';
+                iframe.style.width = '100%';
+                iframe.style.height = '100%';
+                iframe.style.border = 'none';
+                iframe.src = lastUrl;
+                
+                // Clear the page and add the iframe
+                document.body.innerHTML = '';
+                document.body.appendChild(iframe);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+    const customFavicon = localStorage.getItem('customFavicon');
+    const customTitle = localStorage.getItem('customTitle');
+    
+    if (customFavicon || customTitle) {
+      if (customFavicon) {
+        const faviconLink = document.querySelector('link[rel="icon"]') || 
+                           document.createElement('link');
+        faviconLink.type = 'image/x-icon';
+        faviconLink.rel = 'icon';
+        faviconLink.href = customFavicon;
+        document.head.appendChild(faviconLink);
+      }
+      
+      if (customTitle) {
+        document.title = customTitle;
+      }
+    } else {
+      const cloakType = localStorage.getItem('cloakType');
+      if (cloakType) {
+        let title, faviconUrl;
+        
+        switch(cloakType) {
+          case 'google':
+            title = 'Google';
+            faviconUrl = 'https://www.google.com/favicon.ico';
+            break;
+          case 'clever':
+            title = 'Clever | Portal';
+            faviconUrl = 'https://clever.com/favicon.ico';
+            break;
+          case 'canvas':
+            title = 'Dashboard';
+            faviconUrl = 'https://canvas.instructure.com/favicon.ico';
+            break;
+          case 'classroom':
+            title = 'Classes';
+            faviconUrl = 'https://classroom.google.com/favicon.ico';
+            break;
+        }
+        
+        if (title) document.title = title;
+        if (faviconUrl) {
+          const faviconLink = document.querySelector('link[rel="icon"]') || 
+                             document.createElement('link');
+          faviconLink.type = 'image/x-icon';
+          faviconLink.rel = 'icon';
+          faviconLink.href = faviconUrl;
+          document.head.appendChild(faviconLink);
+        }
+      }
+    }
+    
+    const gatekeepEnabled = localStorage.getItem('gatekeepMode') === 'true';
+    if (gatekeepEnabled) {
+      document.addEventListener('click', function(e) {
+        const link = e.target.closest('a');
+        if (link && link.href && !link.hasAttribute('data-no-gatekeep')) {
+          e.preventDefault();
+          const url = link.href;
+          localStorage.setItem('lastAttemptedUrl', url);
+          window.location.href = 'about:blank';
+        }
+      });
+    }
+  });
+  
+  if (window.location.href === 'about:blank') {
+    const lastUrl = localStorage.getItem('lastAttemptedUrl');
+    if (lastUrl) {
+      localStorage.removeItem('lastAttemptedUrl');
+      
+      const iframe = document.createElement('iframe');
+      iframe.style.position = 'fixed';
+      iframe.style.top = '0';
+      iframe.style.left = '0';
+      iframe.style.width = '100%';
+      iframe.style.height = '100%';
+      iframe.style.border = 'none';
+      iframe.src = lastUrl;
+      
+      document.body.innerHTML = '';
+      document.body.appendChild(iframe);
+    }
+  }
+    </script>
+</body>
+</html>
